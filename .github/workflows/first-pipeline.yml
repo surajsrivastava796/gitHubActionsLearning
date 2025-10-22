@@ -1,0 +1,16 @@
+name: "Mera pehla flow"
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'main'
+      - 'hotfix/**'
+
+jobs:
+  TerraformInit:
+    name: TerraformInit
+    runs-on: suraj-maharaj
+    steps:
+      - name: suraj maharaj rocks
+        run: echo Suraj Maharaj

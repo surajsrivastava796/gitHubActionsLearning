@@ -1,0 +1,16 @@
+name: "Mera pehla flow"
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'main'
+      - 'hotfix/**'
+
+jobs:
+  TerraformInit:
+    name: TerraformInit
+    runs-on: suraj-maharaj
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
