@@ -1,24 +1,72 @@
 name: "Mera pehla flow"
-
 on:
   push:
     branches:
       - 'feature/**'
       - 'main'
       - 'hotfix/**'
-
 env:
   ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   ARM_CLIENT_SECRET: ${{ secrets.AZURE_SECRET_ID }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ROOT_PATH: Environment/dev
-
+  BACKEND_RG: demo-GA-dev
+  BACKEND_STORAGE_ACCOUNT: demogastgdev1
+  BACKEND_CONTAINER: demo-ga-cont
+  BACKEND_LOCATION: koreacentral
 
 jobs:
+  BootstrapBackend:
+    name: BootstrapBackend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: |
+            {
+              "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.AZURE_SECRET_ID }}",
+              "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}",
+              "tenantId": "${{ secrets.AZURE_TENANT_ID }}"
+            }
+
+      - name: Create resource group for backend (if not exists)
+        run: |
+          az group create \
+            --name "$BACKEND_RG" \
+            --location "$BACKEND_LOCATION"
+
+      - name: Create storage account (if not exists)
+        run: |
+          if ! az storage account show --name "$BACKEND_STORAGE_ACCOUNT" --resource-group "$BACKEND_RG" &>/dev/null; then
+            az storage account create \
+              --name "$BACKEND_STORAGE_ACCOUNT" \
+              --resource-group "$BACKEND_RG" \
+              --location "$BACKEND_LOCATION" \
+              --sku Standard_LRS \
+              --encryption-services blob
+          else
+            echo "Storage account already exists, skipping."
+          fi
+
+      - name: Create blob container (if not exists)
+        run: |
+          ACCOUNT_KEY=$(az storage account keys list \
+            --resource-group "$BACKEND_RG" \
+            --account-name "$BACKEND_STORAGE_ACCOUNT" \
+            --query '[0].value' -o tsv)
+
+          az storage container create \
+            --name "$BACKEND_CONTAINER" \
+            --account-name "$BACKEND_STORAGE_ACCOUNT" \
+            --account-key "$ACCOUNT_KEY"
+
   TerraformInit:
     name: TerraformInit
     runs-on: ubuntu-latest
+    needs: BootstrapBackend
     steps:
       - name: code checkout
         uses: actions/checkout@v2
