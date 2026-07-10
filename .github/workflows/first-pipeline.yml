@@ -12,7 +12,7 @@ env:
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ROOT_PATH: Environment/dev
   BACKEND_RG: demo-GA-dev
-  BACKEND_STORAGE_ACCOUNT: demogastgdev1
+  BACKEND_STORAGE_ACCOUNT: demogastgdev
   BACKEND_CONTAINER: demo-ga-cont
   BACKEND_LOCATION: koreacentral
 
