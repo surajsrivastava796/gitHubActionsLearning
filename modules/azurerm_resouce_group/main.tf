@@ -1,4 +1,4 @@
  resource "azurerm_resource_group" "suraj-rg" {
-    name = "suraj-rg1"
+    name = "dev-GA-demo"
     location = "koreacentral"   
  }
