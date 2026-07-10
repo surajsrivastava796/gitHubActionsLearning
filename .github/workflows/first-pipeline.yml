@@ -11,7 +11,7 @@ env:
   ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ROOT_PATH: Environment/dev
-  BACKEND_RG: demo-GA-dev
+  BACKEND_RG: terraform-state-rg
   BACKEND_STORAGE_ACCOUNT: demogastgdev
   BACKEND_CONTAINER: demo-ga-cont
   BACKEND_LOCATION: koreacentral
