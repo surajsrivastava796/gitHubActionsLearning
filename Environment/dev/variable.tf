@@ -1,1 +1,1 @@
-var "rgmap" {}
+variable "rgmap"{}
